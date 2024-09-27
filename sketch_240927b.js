@@ -6,38 +6,44 @@ let numbers = [];
 let flip = [];
 let lastClickedIndex = -1; // To store the last clicked index
 let secondLastClickedIndex = -1; // To store the second last clicked index
+let difficulty;
+let nums_gen = 0; 
+let rows_gen = 0;
 
 function setup() {
   createCanvas(500, 400);
-  noLoop();
-  let rows = rows_gen;
-  let cols = 5;
-  let w = (width-100) / cols;
-  let h = (height-100) / rows;
-
-  numbers = generateRandomNumbers(nums_gen);
+  difficulty = createInput('1 for Easy,2 for Medium,3 for Hard');
+  difficulty.position(625, 400);
+  difficulty.input(DiffSet);
   
-  difficulty = createInput('');
-  difficulty.position(625,400);
+  noLoop(); 
+  generateButtons();
+}
 
-  for (let i = 0; i < rows; i++) {
+function generateButtons() {
+  numbers = generateRandomNumbers(nums_gen);
+  flip = new Array(rows_gen * 5).fill(false); 
+  let cols = 5;
+  let w = (width - 100) / cols;
+  let h = (height - 100) / rows_gen;
+
+  for (let i = 0; i < rows_gen; i++) {
     for (let j = 0; j < cols; j++) {
-      let index = i * cols + j; 
-      let button = createButton(''); 
+      let index = i * cols + j;
+      let button = createButton('');
       button.position(j * w + 500, i * h + 50);
       button.size(w, h);
       button.mousePressed(() => flipNumber(index, button));
-      buttons.push(button); 
-      flip.push(false);
+      buttons.push(button);
     }
   }
 }
 
 function generateRandomNumbers(pairCount) {
   let nums = [];
-  while (nums.length < pairCount * 2) {
-    let num = floor(random(1,pairCount + 1));
-    if (nums.filter(n => n === num).length < 2) {
+  while (nums.length < pairCount * 4) {
+    let num = floor(random(1, pairCount + 1));
+    if (nums.filter(n => n === num).length < 4) {
       nums.push(num);
     }
   }
@@ -45,15 +51,15 @@ function generateRandomNumbers(pairCount) {
 }
 
 function flipNumber(index, button) {
-  if (!flip[index]) { 
-    button.html(numbers[index]); 
-    flip[index] = true; 
-    
+  if (!flip[index]) {
+    button.html(numbers[index]);
+    flip[index] = true;
+
     // Check for a match
     if (lastClickedIndex !== -1) {
       if (numbers[lastClickedIndex] === numbers[index] && lastClickedIndex !== index) {
         button.style('background-color', 'green'); // Change color to green
-        buttons[lastClickedIndex].style('background-color', 'green'); // Change the previous button color to green
+        buttons[lastClickedIndex].style('background-color', 'green'); // Change previous button color to green
         lastClickedIndex = -1; // Reset last clicked index
         secondLastClickedIndex = -1; // Reset second last clicked index
       } else {
@@ -66,7 +72,7 @@ function flipNumber(index, button) {
           flip[secondLastClickedIndex] = false; // Update flip state
         }
         // Update the clicked indexes
-        secondLastClickedIndex = lastClickedIndex; // Move the last clicked to second last
+        secondLastClickedIndex = lastClickedIndex; // Move last clicked to second last
         lastClickedIndex = index; // Update last clicked index
       }
     } else {
@@ -75,7 +81,24 @@ function flipNumber(index, button) {
   }
 }
 
-
+function DiffSet() {
+  let diff = difficulty.value();
+  if (diff == "1") {
+    rows_gen = 2;
+    nums_gen = 5;
+  } else if (diff == "2") {
+    rows_gen = 4;
+    nums_gen = 10;
+  } else if (diff == "3") {
+    rows_gen = 8;
+    nums_gen = 20;
+  } else {
+    return; 
+  }
+  
+  difficulty.remove(); 
+  generateButtons(); 
+}
 
 function draw() {
 }
