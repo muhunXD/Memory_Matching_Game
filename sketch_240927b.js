@@ -10,12 +10,15 @@ let secondLastClickedIndex = -1; // To store the second last clicked index
 function setup() {
   createCanvas(500, 400);
   noLoop();
-  let rows = 4;
+  let rows = rows_gen;
   let cols = 5;
-  let w = width / cols;
-  let h = height / rows;
+  let w = (width-100) / cols;
+  let h = (height-100) / rows;
 
-  numbers = generateRandomNumbers(10);
+  numbers = generateRandomNumbers(nums_gen);
+  
+  difficulty = createInput('');
+  difficulty.position(625,400);
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
@@ -25,7 +28,7 @@ function setup() {
       button.size(w, h);
       button.mousePressed(() => flipNumber(index, button));
       buttons.push(button); 
-      flip.push(false); 
+      flip.push(false);
     }
   }
 }
@@ -33,7 +36,7 @@ function setup() {
 function generateRandomNumbers(pairCount) {
   let nums = [];
   while (nums.length < pairCount * 2) {
-    let num = floor(random(1, pairCount + 1));
+    let num = floor(random(1,pairCount + 1));
     if (nums.filter(n => n === num).length < 2) {
       nums.push(num);
     }
@@ -72,6 +75,7 @@ function flipNumber(index, button) {
   }
 }
 
+
+
 function draw() {
-  
 }
