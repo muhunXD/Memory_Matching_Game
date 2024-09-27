@@ -1,3 +1,6 @@
+//Name: Amontep Changdaeng
+//ID: 6601012630092
+
 let buttons = [];
 let numbers = [];
 let flip = [];
