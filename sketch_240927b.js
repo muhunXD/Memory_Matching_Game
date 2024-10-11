@@ -13,15 +13,18 @@ let secondLastClickedIndex = -1; // To store the second last clicked index
 let difficulty;
 let nums_gen = 0; 
 let rows_gen = 0;
+let time = 0;
+let player;
 
 function setup() {
   createCanvas(500, 400);
   difficulty = createInput('1 for Easy,2 for Medium,3 for Hard');
   difficulty.position(625, 400);
   difficulty.input(DiffSet);
-  
   noLoop(); 
   generateButtons();
+  player_select();
+  
 }
 
 function generateButtons() {
@@ -83,6 +86,7 @@ function flipNumber(index, button) {
       lastClickedIndex = index; // Set the first clicked button
     }
   }
+  
 }
 
 function DiffSet() {
@@ -97,13 +101,38 @@ function DiffSet() {
     rows_gen = 8;
     nums_gen = 20;
   } else {
-    return; 
+    return;
   }
   
   difficulty.remove(); 
-  generateButtons(); 
+  generateButtons();
+  text(numbers,100,100,200,200);
 }
 
+function timer(){
+  let i = 1;
+  while (time<60){
+    text_time = text(time+i,100,100,200,200);
+    time = time + i;
+  }  
+}
+
+function draw_timer(){
+  
+}
+
+function player_select(){
+  button1 = createButton('Player 1');
+  button1 = button.style('background-color', 'blue');
+  button1.mousePressed(player1);
+  button1.position(700, 300);
+  button2 = createButton('Player 2');
+  button2 = button.style('background-color', 'red');
+  button2.position(100,100);
+  button1.mousePressed(player2);
+   
+}
 
 function draw() {
+  timer();
 }
