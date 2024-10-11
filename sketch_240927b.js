@@ -1,5 +1,9 @@
 //Name: Amontep Changdaeng
 //ID: 6601012630092
+//Multiplayer
+//Hint
+//Timer
+
 
 let buttons = [];
 let numbers = [];
@@ -22,7 +26,7 @@ function setup() {
 
 function generateButtons() {
   numbers = generateRandomNumbers(nums_gen);
-  flip = new Array(rows_gen * 5).fill(false); 
+  flip = new Array(rows_gen * 5).fill(false);
   let cols = 5;
   let w = (width - 100) / cols;
   let h = (height - 100) / rows_gen;
@@ -99,6 +103,7 @@ function DiffSet() {
   difficulty.remove(); 
   generateButtons(); 
 }
+
 
 function draw() {
 }
