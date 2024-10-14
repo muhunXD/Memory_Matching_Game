@@ -1,10 +1,3 @@
-//Name: Amontep Changdaeng
-//ID: 6601012630092
-//Multiplayer
-//Hint
-//Timer
-
-
 let buttons = [];
 let numbers = [];
 let flip = [];
@@ -13,18 +6,17 @@ let secondLastClickedIndex = -1; // To store the second last clicked index
 let difficulty;
 let nums_gen = 0; 
 let rows_gen = 0;
-let time = 0;
+let startTime = 0;
 let player;
 
 function setup() {
   createCanvas(500, 400);
-  difficulty = createInput('1 for Easy,2 for Medium,3 for Hard');
+  difficulty = createInput('1 for Easy, 2 for Medium, 3 for Hard');
   difficulty.position(625, 400);
   difficulty.input(DiffSet);
   noLoop(); 
   generateButtons();
   player_select();
-  
 }
 
 function generateButtons() {
@@ -86,7 +78,6 @@ function flipNumber(index, button) {
       lastClickedIndex = index; // Set the first clicked button
     }
   }
-  
 }
 
 function DiffSet() {
@@ -103,36 +94,32 @@ function DiffSet() {
   } else {
     return;
   }
-  
+
   difficulty.remove(); 
   generateButtons();
-  text(numbers,100,100,200,200);
+  startTime = millis(); // Start the timer after difficulty is set
+  loop(); // Start the draw loop for the timer
 }
 
-function timer(){
-  let i = 1;
-  while (time<60){
-    text_time = text(time+i,100,100,200,200);
-    time = time + i;
-  }  
-}
-
-function draw_timer(){
-  
-}
-
-function player_select(){
-  button1 = createButton('Player 1');
-  button1 = button.style('background-color', 'blue');
-  button1.mousePressed(player1);
+function player_select() {
+  let button1 = createButton('Player 1');
+  button1.style('background-color', 'blue');
   button1.position(700, 300);
-  button2 = createButton('Player 2');
-  button2 = button.style('background-color', 'red');
-  button2.position(100,100);
-  button1.mousePressed(player2);
-   
+  button1.mousePressed(() => player = 'Player 1');
+  
+  let button2 = createButton('Player 2');
+  button2.style('background-color', 'red');
+  button2.position(700, 350);
+  button2.mousePressed(() => player = 'Player 2');
 }
 
 function draw() {
-  timer();
+  background(255);
+  
+  let elapsedTime = millis() - startTime;
+  let seconds = floor(elapsedTime / 1000); // Convert to seconds
+  
+  fill(0);
+  textSize(24);
+  text("Time: " + seconds + " s", 50, 50); // Display the timer
 }
