@@ -3,20 +3,29 @@ let numbers = [];
 let flip = [];
 let lastClickedIndex = -1; // To store the last clicked index
 let secondLastClickedIndex = -1; // To store the second last clicked index
-let difficulty;
-let nums_gen = 0; 
+let nums_gen = 0;
 let rows_gen = 0;
 let startTime = 0;
-let player;
+let currentPlayer = 'Player 1'; // Default to Player 1
+let player1Score = 0;
+let player2Score = 0;
+let gameCompleted = false;
+let difficulty;
+let instructionText; // Text element for instructions
 
 function setup() {
   createCanvas(500, 400);
-  difficulty = createInput('1 for Easy, 2 for Medium, 3 for Hard');
+
+  // Create input box for player and difficulty selection
+  difficulty = createInput('Player and Difficulty');
   difficulty.position(625, 400);
+
+  // Create a text element below the input box for instructions
+  instructionText = createP('Enter the player number (1 or 2) and difficulty (1 = Easy, 2 = Medium, 3 = Hard). Example: "12" for Player 1, Medium.');
+  instructionText.position(350, 440); // Position below the input box
+
   difficulty.input(DiffSet);
-  noLoop(); 
-  generateButtons();
-  player_select();
+  noLoop();
 }
 
 function generateButtons() {
@@ -40,17 +49,24 @@ function generateButtons() {
 
 function generateRandomNumbers(pairCount) {
   let nums = [];
-  while (nums.length < pairCount * 4) {
-    let num = floor(random(1, pairCount + 1));
-    if (nums.filter(n => n === num).length < 4) {
-      nums.push(num);
-    }
+  
+  // Create pairs of numbers, each number appears exactly twice
+  for (let i = 1; i <= pairCount; i++) {
+    nums.push(i);
+    nums.push(i);
   }
+  
+  // Shuffle the numbers array
+  for (let i = nums.length - 1; i > 0; i--) {
+    let j = floor(random(0, i + 1));
+    [nums[i], nums[j]] = [nums[j], nums[i]]; // Swap numbers for shuffle
+  }
+  
   return nums;
 }
 
 function flipNumber(index, button) {
-  if (!flip[index]) {
+  if (!flip[index] && !gameCompleted) {
     button.html(numbers[index]);
     flip[index] = true;
 
@@ -59,6 +75,13 @@ function flipNumber(index, button) {
       if (numbers[lastClickedIndex] === numbers[index] && lastClickedIndex !== index) {
         button.style('background-color', 'green'); // Change color to green
         buttons[lastClickedIndex].style('background-color', 'green'); // Change previous button color to green
+        
+        if (currentPlayer === 'Player 1') {
+          player1Score++; // Increment Player 1's score
+        } else {
+          player2Score++; // Increment Player 2's score
+        }
+        
         lastClickedIndex = -1; // Reset last clicked index
         secondLastClickedIndex = -1; // Reset second last clicked index
       } else {
@@ -73,15 +96,39 @@ function flipNumber(index, button) {
         // Update the clicked indexes
         secondLastClickedIndex = lastClickedIndex; // Move last clicked to second last
         lastClickedIndex = index; // Update last clicked index
+
+        // Switch to the other player
+        currentPlayer = (currentPlayer === 'Player 1') ? 'Player 2' : 'Player 1';
       }
     } else {
       lastClickedIndex = index; // Set the first clicked button
     }
+
+    // Check if the game is completed
+    checkGameCompletion();
+  }
+}
+
+function checkGameCompletion() {
+  // Check if all buttons are flipped and their background is green
+  let allMatched = flip.every((flipped, index) => flipped && buttons[index].style('background-color') === 'green');
+
+  if (allMatched) {
+    gameCompleted = true; // Mark the game as completed
+    noLoop(); // Stop the timer
   }
 }
 
 function DiffSet() {
-  let diff = difficulty.value();
+  let input = difficulty.value();
+  
+  let playerNumber = input[0]; // First character is player number
+  let diff = input[1]; // Second character is difficulty level
+
+  // Set current player based on input
+  currentPlayer = (playerNumber === '1') ? 'Player 1' : 'Player 2';
+
+  // Set difficulty based on input
   if (diff == "1") {
     rows_gen = 2;
     nums_gen = 5;
@@ -95,31 +142,25 @@ function DiffSet() {
     return;
   }
 
-  difficulty.remove(); 
+  difficulty.remove();
+  instructionText.remove(); // Remove instruction text after starting the game
   generateButtons();
   startTime = millis(); // Start the timer after difficulty is set
   loop(); // Start the draw loop for the timer
 }
 
-function player_select() {
-  let button1 = createButton('Player 1');
-  button1.style('background-color', 'blue');
-  button1.position(700, 300);
-  button1.mousePressed(() => player = 'Player 1');
-  
-  let button2 = createButton('Player 2');
-  button2.style('background-color', 'red');
-  button2.position(700, 350);
-  button2.mousePressed(() => player = 'Player 2');
-}
-
 function draw() {
   background(255);
-  
+
   let elapsedTime = millis() - startTime;
   let seconds = floor(elapsedTime / 1000); // Convert to seconds
   
   fill(0);
   textSize(24);
   text("Time: " + seconds + " s", 50, 50); // Display the timer
+  
+  // Display the current player and scores
+  text("Current Player: " + currentPlayer, 50, 100);
+  text("Player 1 Score: " + player1Score, 50, 150);
+  text("Player 2 Score: " + player2Score, 50, 200);
 }
