@@ -67,9 +67,17 @@ function generateRandomNumbers(pairCount) {
   return nums;
 }
 
+function convertNumberToLines(num) {
+  let line = '';
+  for (let i = 0; i < num; i++) {
+    line += '|'; // Append a vertical bar for each unit of the number
+  }
+  return line;
+}
+
 function flipNumber(index, button) {
   if (!flip[index] && !gameCompleted) {
-    button.html(numbers[index]);
+    button.html(convertNumberToLines(numbers[index])); // Convert the number to lines
     flip[index] = true;
 
     // Check for a match
