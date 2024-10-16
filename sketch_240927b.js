@@ -12,6 +12,8 @@ let player2Score = 0;
 let gameCompleted = false;
 let difficulty;
 let instructionText; // Text element for instructions
+let hintButton; // Button to show hint
+let hintText = ''; // Hint message
 
 function setup() {
   createCanvas(500, 400);
@@ -146,7 +148,37 @@ function DiffSet() {
   instructionText.remove(); // Remove instruction text after starting the game
   generateButtons();
   startTime = millis(); // Start the timer after difficulty is set
+
+  // Create hint button and position it below the canvas
+  hintButton = createButton('Show Hint');
+  hintButton.position(625, 450);
+  hintButton.mousePressed(showHint); // Call showHint when button is clicked
+
   loop(); // Start the draw loop for the timer
+}
+
+function showHint() {
+  // Only show hint if there is a last clicked index
+  if (lastClickedIndex !== -1) {
+    let lastRow = Math.floor(lastClickedIndex / 5);
+    let lastCol = lastClickedIndex % 5;
+    
+    // Find the first unmatched number that is the same as the last clicked number
+    let correctIndex = numbers.findIndex((num, idx) => num === numbers[lastClickedIndex] && idx !== lastClickedIndex && !flip[idx]);
+    
+    if (correctIndex !== -1) {
+      let correctRow = Math.floor(correctIndex / 5);
+      let correctCol = correctIndex % 5;
+      
+      let distance = Math.abs(lastRow - correctRow) + Math.abs(lastCol - correctCol); // Manhattan distance
+      
+      hintText = `Hint: The matching number is ${distance} steps away.`;
+    } else {
+      hintText = 'Hint: No available matching number.';
+    }
+  } else {
+    hintText = 'Hint: No number has been clicked yet.';
+  }
 }
 
 function draw() {
@@ -163,4 +195,9 @@ function draw() {
   text("Current Player: " + currentPlayer, 50, 100);
   text("Player 1 Score: " + player1Score, 50, 150);
   text("Player 2 Score: " + player2Score, 50, 200);
+  
+  // Display the hint message
+  textSize(18);
+  fill(0);
+  text(hintText, 50, 300);
 }
