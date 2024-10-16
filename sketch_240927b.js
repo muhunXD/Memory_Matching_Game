@@ -67,17 +67,24 @@ function generateRandomNumbers(pairCount) {
   return nums;
 }
 
-function convertNumberToLines(num) {
+function animateLines(button, num) {
   let line = '';
-  for (let i = 0; i < num; i++) {
-    line += '|'; // Append a vertical bar for each unit of the number
-  }
-  return line;
+  let count = 0;
+
+  let interval = setInterval(() => {
+    if (count < num) {
+      line += '|'; // Append a vertical bar for each unit of the number
+      button.html(line); // Update the button with the current line string
+      count++;
+    } else {
+      clearInterval(interval); // Stop the interval once all lines are displayed
+    }
+  }, 200); // Delay between each line (in milliseconds)
 }
 
 function flipNumber(index, button) {
   if (!flip[index] && !gameCompleted) {
-    button.html(convertNumberToLines(numbers[index])); // Convert the number to lines
+    animateLines(button, numbers[index]); // Call the animate function to show lines one by one
     flip[index] = true;
 
     // Check for a match
